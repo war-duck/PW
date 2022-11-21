@@ -2,10 +2,24 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include <time.h>
 #define BOARD_SIZE 35    // wys/szer planszy
 #define RADIUS 5         // promień kółka
 #define DIST_FROM_EDGE 8 // odległość środka kółka od krawędzi
-
+#ifndef uint 
+typedef unsigned int uint;
+#endif
+uint path_col_row (int start, int end) // jeżeli rząd, to zaprzeczenie więc będzie > BOARD_SIZE
+{
+    switch (start)
+    {
+        case 0: return end == 1 ? ~(uint)(DIST_FROM_EDGE - 1) : (uint)(DIST_FROM_EDGE + 1);
+        case 1: return end == 0 ? ~(uint)(DIST_FROM_EDGE + 1) : (uint)(DIST_FROM_EDGE + 1);
+        case 2: return end == 1 ? ~(uint)(DIST_FROM_EDGE - 1) : (uint)(DIST_FROM_EDGE + 1);
+        case 3: return end == 1 ? ~(uint)(DIST_FROM_EDGE - 1) : (uint)(DIST_FROM_EDGE + 1);
+    }
+    return ~0;
+}
 void draw_paths (char board[])
 {
     board[(DIST_FROM_EDGE - 2) * (2*BOARD_SIZE + 1) + BOARD_SIZE] = '0';
@@ -40,6 +54,21 @@ char calc_val (int i, int j)
     return ' ';
 }
 
+void anim (char board[], int start, int end, int coord[4][2])
+{
+    
+    int i;
+    if (coord[start][0] == coord[end][0]) // kolumna
+    {
+        int diff = (2*BOARD_SIZE + 1) * (start > end ? -1 : 1);
+        for ()
+    }
+    else
+    {
+        int diff = 1 * (start > end ? -1 : 1);
+    }
+}
+
 void board_init (char board[]) // tworzy plansze
 {
     int i, j; // koordynaty char na planszy
@@ -65,13 +94,17 @@ int main (void)
     short path [2][4] = {{1, 3, 0, 1},  // 0
                          {2, 0, 3, 2}}; // 1
     short state = 0; // obecny stan
-
     printf("Wprowadz ciag:\n");
+    int coord[4][2] =  {{2*DIST_FROM_EDGE, DIST_FROM_EDGE}, // 0.x, 0.y
+                        {2*(BOARD_SIZE - DIST_FROM_EDGE), DIST_FROM_EDGE}, // 1
+                        {2*DIST_FROM_EDGE, BOARD_SIZE - DIST_FROM_EDGE}, // 2
+                        {2*(BOARD_SIZE - DIST_FROM_EDGE), BOARD_SIZE - DIST_FROM_EDGE}}; // 3 
     char *in = NULL;
     size_t len = 0, in_size = 0;
-    in_size = getline(&in, &len, stdin);
     size_t i;
+    in_size = getline(&in, &len, stdin);
     board_init(board);
+              
     for (i = 0; i < in_size - 1; ++i)
     {
         if (in[i] != '0' && in[i] != '1')
@@ -83,7 +116,8 @@ int main (void)
     }
     for (i = 0; i < in_size - 1; ++i)
     {
-        printf ("q%d--%c-->q%d\n", state, in[i], path[in[i] - '0'][state]);
+        anim (board, start, end, coord);
+        //printf ("q%d--%c-->q%d\n", state, in[i], path[in[i] - '0'][state]);
         state = path[in[i] - '0'][state];
     }
     if (state != 2)
